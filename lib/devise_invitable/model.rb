@@ -146,8 +146,8 @@ module Devise
       end
 
       def clear_errors_on_valid_keys
-        self.class.invite_key.each do |key, regexp|
-          self.errors.delete(key) if regexp.nil? || self.send(key).try(:match, regexp)
+        self.class.invite_key.each do |key, value|
+          self.errors.delete(key) if value === self.send(key)
         end
       end
 

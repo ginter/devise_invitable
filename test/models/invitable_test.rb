@@ -78,7 +78,7 @@ class InvitableTest < ActiveSupport::TestCase
     end
   end
 
-  test 'should invite with mutiple columns for invite key' do
+  test 'should invite with multiple columns for invite key' do
     User.stubs(:invite_key).returns(:email => Devise.email_regexp, :username => /\A.+\z/)
     user = User.invite!(:email => "valid@email.com", :username => "name")
     assert user.persisted?
@@ -92,6 +92,13 @@ class InvitableTest < ActiveSupport::TestCase
     assert user.errors.present?
     assert user.errors[:username]
     assert user.errors[:email].empty?
+  end
+
+  test 'should allow non-string columns for invite key' do
+    User.stubs(:invite_key).returns(:email => Devise.email_regexp, :profile_id => :present?.to_proc, :active => true)
+    user = User.invite!(:email => "valid@email.com", :profile_id => 1, :active => true)
+    assert user.persisted?
+    assert user.errors.empty?
   end
 
   test 'should return mail object' do
